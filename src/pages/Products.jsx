@@ -74,7 +74,7 @@ const dummyProducts = [
 function Products() {
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-4xl font-extrabold text-gray-900 mb-8">Our UFit Products</h1>
+      <h1 className="text-4xl  font-extrabold text-white mb-8">Our UFit Products</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {/* Key must be unique, using product.id */}
         {dummyProducts.map((product) => (
