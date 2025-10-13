@@ -58,7 +58,7 @@ function Signup() {
             onChange={(e) => setUsername(e.target.value)} // ⚠️ CHANGE: Updated setter
             placeholder="Choose a username"
             required 
-            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150" 
+            className="w-full text-black p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150" 
           />
         </div>
 
@@ -71,7 +71,7 @@ function Signup() {
             onChange={(e) => setEmail(e.target.value)}
             placeholder="your.email@example.com"
             required 
-            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150" 
+            className="w-full p-3 border text-black border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150" 
           />
         </div>
         
@@ -84,7 +84,7 @@ function Signup() {
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Create a strong password"
             required 
-            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150" 
+            className="w-full p-3 border text-black border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150" 
           />
         </div>
 
