@@ -1,16 +1,48 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom'; // ➕ CHANGE: Import useNavigate for redirection
 
 function Signup() {
-  const [name, setName] = useState('');
+  const [username, setUsername] = useState(''); // ⚠️ CHANGE: Renamed 'name' to 'username' to match backend schema
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState(null); // ➕ ADDED: State for displaying API errors
+  const [loading, setLoading] = useState(false); // ➕ ADDED: State for loading/disabling button
 
-  const handleSubmit = (e) => {
+  const navigate = useNavigate(); // ➕ ADDED: Hook for redirection
+
+  const handleSubmit = async (e) => { // ⚠️ CHANGE: Made function async to handle fetch
     e.preventDefault();
-    console.log('Signup attempt with:', { name, email, password });
-    alert('Account created! Please log in.');
-    // In a real application, you would handle user creation and redirection here
+    setError(null);
+    setLoading(true);
+
+    try {
+      // ⚠️ CHANGE: API call to the backend's signup endpoint
+      const response = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        // ⚠️ CRITICAL: Send username, email, and password to the server
+        body: JSON.stringify({ username, email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        // ⚠️ CHANGE: Handle server-side errors (e.g., email or username already exists)
+        setError(data.message || 'Registration failed. Please try again.');
+      } else {
+        // 🚀 SUCCESS: Redirect to login page after successful registration
+        alert('Account created successfully! Please log in.');
+        navigate('/login'); 
+      }
+    } catch (err) {
+      // ⚠️ CHANGE: Catch network errors
+      setError('A network error occurred. Check server connection.');
+      console.error('Signup error:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -18,13 +50,13 @@ function Signup() {
       <h2 className="text-3xl font-bold text-center mb-8 text-gray-800">Join UFit Today</h2>
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+          <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">Username</label>
           <input 
             type="text" 
-            id="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="John Doe"
+            id="username" // ⚠️ CHANGE: Updated ID
+            value={username} // ⚠️ CHANGE: Updated value to 'username' state
+            onChange={(e) => setUsername(e.target.value)} // ⚠️ CHANGE: Updated setter
+            placeholder="Choose a username"
             required 
             className="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150" 
           />
@@ -56,11 +88,17 @@ function Signup() {
           />
         </div>
 
+        {/* ➕ ADDED: Display the error message */}
+        {error && (
+            <p className="text-red-500 text-sm font-medium text-center">{error}</p>
+        )}
+
         <button 
           type="submit" 
-          className="w-full bg-green-500 text-white p-3 rounded-lg font-semibold hover:bg-green-600 transition duration-200 shadow-md"
+          disabled={loading} // ⚠️ CHANGE: Disable button while loading
+          className="w-full bg-green-500 text-white p-3 rounded-lg font-semibold hover:bg-green-600 transition duration-200 shadow-md disabled:opacity-50"
         >
-          Sign Up
+          {loading ? 'Registering...' : 'Sign Up'} {/* ⚠️ CHANGE: Update text when loading */}
         </button>
       </form>
       <p className="mt-6 text-center text-sm text-gray-600">

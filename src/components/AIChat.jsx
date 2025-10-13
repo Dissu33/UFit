@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 
 // Array of health-related prompt messages
 const PROMPTS = [
-  "Ask me how's your day!",
+  "how's your day!",
   "Need a quick fitness tip?",
   "Want to create a diet plan?",
   "Curious about your BMI score?",

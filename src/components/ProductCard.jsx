@@ -1,5 +1,8 @@
+// src/components/ProductCard.jsx
+
 import React, { useState } from 'react';
-import { useCart } from '../context/CartContext.jsx';
+import { motion } from 'framer-motion'; // <-- Import motion
+import { useCart } from '../context/CartContext.jsx'; 
 
 function ProductCard({ product }) {
   const [isHovered, setIsHovered] = useState(false);
@@ -23,8 +26,33 @@ function ProductCard({ product }) {
   const showControls = quantity > 0 && isHovered;
   const showInitialButton = quantity === 0 || !isHovered;
 
+  // Animation variants for individual ProductCard
+  // These are picked up by the 'staggerChildren' in the parent (Products.jsx)
+  const cardVariants = {
+    hidden: { 
+      opacity: 0, 
+      y: 75,       // Start 75px below
+      rotateZ: -5   // Start slightly tilted
+    },
+    visible: { 
+      opacity: 1, 
+      y: 0, 
+      rotateZ: 0, // End straight
+      transition: { 
+        type: "spring", // Use a spring physics effect for a natural bounce
+        stiffness: 100, // Makes the movement snappy
+        damping: 15     // Controls the amount of bounce
+      } 
+    }
+  };
+
   return (
-    <div 
+    <motion.div // <-- Essential: wrap with motion.div for animation
+      variants={cardVariants} // Apply the animation variants
+      initial="hidden"       // Start from the 'hidden' state
+      animate="visible"      // Animate to the 'visible' state
+      whileHover={{ scale: 1.05, rotateZ: 0 }} // Subtle lift and ensure straight on hover
+      
       className="bg-white rounded-xl shadow-lg hover:shadow-2xl transition duration-300 overflow-hidden border border-gray-200"
       onMouseEnter={handleMouseEnter} // Track hover state
       onMouseLeave={handleMouseLeave} // Track hover state
@@ -78,7 +106,7 @@ function ProductCard({ product }) {
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 

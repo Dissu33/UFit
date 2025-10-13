@@ -1,15 +1,54 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom'; // ➕ CHANGE: Import useNavigate for redirection
+import { useAuth } from '../context/AuthContext'; // ➕ CHANGE: Import useAuth for global state
 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState(null); // ➕ ADDED: State for displaying API errors
+  const [loading, setLoading] = useState(false); // ➕ ADDED: State for loading/disabling button
 
-  const handleSubmit = (e) => {
+  const navigate = useNavigate();
+  const { setUser } = useAuth(); // ➕ CHANGE: Get the function to update global user state
+
+  const handleSubmit = async (e) => { // ⚠️ CHANGE: Made function async to handle fetch
     e.preventDefault();
-    console.log('Login attempt with:', { email, password });
-    alert('Login feature is under development. Welcome to UFit!');
-    // In a real application, you would handle API calls here
+    setError(null);
+    setLoading(true);
+
+    try {
+      // ⚠️ CHANGE: API call to the backend's login endpoint
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        // ⚠️ CHANGE: Handle errors like "Invalid Credentials"
+        setError(data.message || 'Login failed. Please check your email and password.');
+      } else {
+        // 🚀 CRITICAL CHANGE: On success, store token and user data
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user)); 
+        
+        // Update global state via AuthContext
+        setUser(data.user); 
+
+        // Redirect to the home page
+        navigate('/'); 
+      }
+    } catch (err) {
+      // ⚠️ CHANGE: Catch network errors (e.g., backend server is down)
+      setError('A network error occurred. Check if the server is running.');
+      console.error('Login error:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -30,7 +69,7 @@ function Login() {
         </div>
         
         <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+          <label htmlFor="password" className="block text-sm font-medium text-black mb-1">Password</label>
           <input 
             type="password" 
             id="password"
@@ -42,14 +81,20 @@ function Login() {
           />
         </div>
 
+        {/* ➕ ADDED: Display the error message */}
+        {error && (
+            <p className="text-red-500 text-sm font-medium text-center">{error}</p>
+        )}
+
         <button 
           type="submit" 
-          className="w-full bg-indigo-600 text-white p-3 rounded-lg font-semibold hover:bg-indigo-700 transition duration-200 shadow-md"
+          disabled={loading} // ⚠️ CHANGE: Disable button while loading
+          className="w-full bg-indigo-600 text-white p-3 rounded-lg font-semibold hover:bg-indigo-700 transition duration-200 shadow-md disabled:opacity-50"
         >
-          Log In
+          {loading ? 'Logging In...' : 'Log In'} {/* ⚠️ CHANGE: Update text when loading */}
         </button>
       </form>
-      <p className="mt-6 text-center text-sm text-gray-600">
+      <p className="mt-6 text-center text-sm text-black">
         Don't have an account? 
         <Link to="/signup" className="text-indigo-600 font-medium hover:text-indigo-800 ml-1">
           Sign Up
