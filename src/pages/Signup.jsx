@@ -17,14 +17,12 @@ function Signup() {
 
     try {
       // ⚠️ CHANGE: API call to the backend's signup endpoint
-      const response = await fetch('/api/auth/signup', {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/signup`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        // ⚠️ CRITICAL: Send username, email, and password to the server
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, email, password }),
       });
+
 
       const data = await response.json();
 
@@ -34,7 +32,7 @@ function Signup() {
       } else {
         // 🚀 SUCCESS: Redirect to login page after successful registration
         alert('Account created successfully! Please log in.');
-        navigate('/login'); 
+        navigate('/login');
       }
     } catch (err) {
       // ⚠️ CHANGE: Catch network errors
@@ -51,50 +49,50 @@ function Signup() {
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
           <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">Username</label>
-          <input 
-            type="text" 
+          <input
+            type="text"
             id="username" // ⚠️ CHANGE: Updated ID
             value={username} // ⚠️ CHANGE: Updated value to 'username' state
             onChange={(e) => setUsername(e.target.value)} // ⚠️ CHANGE: Updated setter
             placeholder="Choose a username"
-            required 
-            className="w-full text-black p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150" 
+            required
+            className="w-full text-black p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150"
           />
         </div>
 
         <div>
           <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-          <input 
-            type="email" 
+          <input
+            type="email"
             id="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="your.email@example.com"
-            required 
-            className="w-full p-3 border text-black border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150" 
+            required
+            className="w-full p-3 border text-black border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150"
           />
         </div>
-        
+
         <div>
           <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-          <input 
-            type="password" 
+          <input
+            type="password"
             id="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Create a strong password"
-            required 
-            className="w-full p-3 border text-black border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150" 
+            required
+            className="w-full p-3 border text-black border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150"
           />
         </div>
 
         {/* ➕ ADDED: Display the error message */}
         {error && (
-            <p className="text-red-500 text-sm font-medium text-center">{error}</p>
+          <p className="text-red-500 text-sm font-medium text-center">{error}</p>
         )}
 
-        <button 
-          type="submit" 
+        <button
+          type="submit"
           disabled={loading} // ⚠️ CHANGE: Disable button while loading
           className="w-full bg-green-500 text-white p-3 rounded-lg font-semibold hover:bg-green-600 transition duration-200 shadow-md disabled:opacity-50"
         >
@@ -102,7 +100,7 @@ function Signup() {
         </button>
       </form>
       <p className="mt-6 text-center text-sm text-gray-600">
-        Already have an account? 
+        Already have an account?
         <Link to="/login" className="text-indigo-600 font-medium hover:text-indigo-800 ml-1">
           Log In
         </Link>
